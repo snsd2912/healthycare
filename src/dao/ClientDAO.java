@@ -2,12 +2,14 @@
 import static dao.DAO.con;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import model.Client;
 
 public class ClientDAO extends DAO{
-	public boolean checkLogin(Client client) {
+    /*	
+    public boolean checkLogin(Client client) {
 		boolean result = false;
 		String sql = "SELECT name FROM tbclient WHERE username = ? AND password = ?";
 		try {
@@ -24,6 +26,7 @@ public class ClientDAO extends DAO{
 		}
 		return result;
 	}
+        */
 	/**
 	 * search all clients in the tblClient whose name contains the @key
 	 * @param key
@@ -117,7 +120,16 @@ public class ClientDAO extends DAO{
 	 * add a new @client into the DB
 	 * @param client
 	 */
-	public void addClient(Client client){
+	public boolean addClient(Client client) throws SQLException{
+                String sql2 = "select name from tbclient where username = ?\n" +
+                                    "union\n" +
+                                    "select name from tbstaff where username = ?";
+                PreparedStatement ps2 = con.prepareStatement(sql2, Statement.RETURN_GENERATED_KEYS);
+                ps2.setString(1, client.getUsername());
+                ps2.setString(2, client.getUsername());
+		ResultSet rs2 = ps2.executeQuery();
+                if(rs2.getRow()>0) return false;
+                
 		String sql = "INSERT INTO tbclient(username,password,name,dob,gender,phonenumber,description) VALUES(?,?,?,?,?,?,?)";
 		try{
 			PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -138,6 +150,7 @@ public class ClientDAO extends DAO{
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+                return true;
 	}
 	
 	/**
@@ -178,4 +191,29 @@ public class ClientDAO extends DAO{
 			e.printStackTrace();
 		}
 	}
+        
+        /**
+	 * get the client whose username is @username
+	 * @param username
+	*/
+        public Client getClientByUsername(Client client){
+		String sql = "SELECT * FROM tbclient WHERE username=?";
+		try{
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, client.getUsername());
+			ResultSet rs = ps.executeQuery();
+
+			if(rs.next()){
+				client.setId(rs.getInt("id"));
+				client.setDob(rs.getString("dob"));
+				client.setGender(rs.getString("gender"));
+				client.setPhonenumber(rs.getString("phonenumber"));
+                                client.setDescription(rs.getString("description"));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}	
+		return client;
+	}
+        
 }

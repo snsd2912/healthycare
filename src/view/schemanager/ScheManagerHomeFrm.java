@@ -5,16 +5,19 @@
  */
 package view.schemanager;
 
+import model.Staff;
+
 /**
  *
  * @author DELL
  */
 public class ScheManagerHomeFrm extends javax.swing.JFrame {
-
+    private Staff staff;
     /**
      * Creates new form ScheManagerHomeFrm
      */
-    public ScheManagerHomeFrm() {
+    public ScheManagerHomeFrm(Staff staff) {
+        this.staff = staff;
         initComponents();
     }
 
@@ -72,8 +75,9 @@ public class ScheManagerHomeFrm extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            private Staff staff;
             public void run() {
-                new ScheManagerHomeFrm().setVisible(true);
+                new ScheManagerHomeFrm(this.staff).setVisible(true);
             }
         });
     }

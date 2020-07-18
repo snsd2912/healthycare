@@ -14,33 +14,33 @@ import java.util.Date;
  * @author ssangg_ss
  */
 public class Doctor extends Staff implements Serializable{
-    private int idlevel;
-    private int iddepartment;
+    private Level level;
+    private Department department;
 
     public Doctor() {
         super();
     }
     
-    public Doctor(int idlevel,int iddepartment,int id, String username, String password, 
-                        String name, String position, Date dob, String gender, String phonenumber){
+    public Doctor(Level idlevel,Department iddepartment,int id, String username, String password, 
+                        String name, String position, String dob, String gender, String phonenumber){
         super(id,username,password,name,position,dob,gender,phonenumber);
-        this.idlevel = idlevel;
-        this.iddepartment = iddepartment;
+        this.level = idlevel;
+        this.department = iddepartment;
     }
 
-    public int getIdlevel() {
-        return idlevel;
+    public Level getLevel() {
+        return level;
     }
 
-    public void setIdlevel(int idlevel) {
-        this.idlevel = idlevel;
+    public void setLevel(Level level) {
+        this.level = level;
     }
 
-    public int getIddepartment() {
-        return iddepartment;
+    public Department getDepartment() {
+        return department;
     }
 
-    public void setIddepartment(int iddepartment) {
-        this.iddepartment = iddepartment;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 }

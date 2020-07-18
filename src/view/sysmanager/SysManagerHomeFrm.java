@@ -5,16 +5,19 @@
  */
 package view.sysmanager;
 
+import model.Staff;
+
 /**
  *
  * @author DELL
  */
 public class SysManagerHomeFrm extends javax.swing.JFrame {
-
+    private Staff staff;
     /**
      * Creates new form SysManagerHomeFrm
      */
-    public SysManagerHomeFrm() {
+    public SysManagerHomeFrm(Staff staff) {
+        this.staff = staff;
         initComponents();
     }
 
@@ -82,8 +85,9 @@ public class SysManagerHomeFrm extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            private Staff staff;
             public void run() {
-                new SysManagerHomeFrm().setVisible(true);
+                new SysManagerHomeFrm(this.staff).setVisible(true);
             }
         });
     }

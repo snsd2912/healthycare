@@ -5,16 +5,19 @@
  */
 package view.doctor;
 
+import model.Staff;
+
 /**
  *
  * @author DELL
  */
 public class DoctorHomeFrm extends javax.swing.JFrame {
-
+    private Staff staff;
     /**
      * Creates new form DoctorHomeFrm
      */
-    public DoctorHomeFrm() {
+    public DoctorHomeFrm(Staff staff) {
+        this.staff = staff;
         initComponents();
     }
 
@@ -72,8 +75,9 @@ public class DoctorHomeFrm extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            private Staff staff;
             public void run() {
-                new DoctorHomeFrm().setVisible(true);
+                new DoctorHomeFrm(this.staff).setVisible(true);
             }
         });
     }

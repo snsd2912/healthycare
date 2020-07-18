@@ -108,20 +108,20 @@ public class LoginFrm extends JFrame implements ActionListener{
                     switch (x) {
                         case 1:
                             if(staff.getPosition().equalsIgnoreCase("sysmanager")) {
-                                (new SysManagerHomeFrm()).setVisible(true);
+                                (new SysManagerHomeFrm(staff)).setVisible(true);
                                 this.dispose();
                             }else if(staff.getPosition().equalsIgnoreCase("doctor")) {
-                                (new DoctorHomeFrm()).setVisible(true);
+                                (new DoctorHomeFrm(staff)).setVisible(true);
                                 this.dispose();
                             }else if(staff.getPosition().equalsIgnoreCase("schemanager")) {
-                                (new ScheManagerHomeFrm()).setVisible(true);
+                                (new ScheManagerHomeFrm(staff)).setVisible(true);
                                 this.dispose();
                             }
                             else
                                 JOptionPane.showMessageDialog(this, "The function is under construction!");
                             break;
                         case 2:
-                            (new ClientHomeFrm()).setVisible(true);
+                            (new ClientHomeFrm(client)).setVisible(true);
                             this.dispose();
                             break;
                         default:

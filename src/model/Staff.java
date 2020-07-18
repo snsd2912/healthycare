@@ -9,14 +9,14 @@ public class Staff implements Serializable{
     private String password;
     private String name;
     private String position;
-    private Date dob;
+    private String dob;
     private String gender;
     private String phonenumber;
 
     public Staff() {
     }
 
-    public Staff(int id, String username, String password, String name, String position, Date dob, String gender, String phonenumber) {
+    public Staff(int id, String username, String password, String name, String position, String dob, String gender, String phonenumber) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -68,11 +68,11 @@ public class Staff implements Serializable{
         this.position = position;
     }
 
-    public Date getDob() {
+    public String getDob() {
         return dob;
     }
 
-    public void setDob(Date dob) {
+    public void setDob(String dob) {
         this.dob = dob;
     }
 

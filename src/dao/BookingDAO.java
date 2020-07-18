@@ -1,154 +1,153 @@
 package dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import model.Bank;
+import model.Bill;
 import model.Booking;
 import model.Client;
+import model.Doctor;
+import model.Shift;
 
 public class BookingDAO extends DAO{
 
 	public BookingDAO() {
 		super();
 	}
+        
+        /** 
+         * Get all the shift  
+         * @return 
+         */
+        public ArrayList<Shift> getShift() throws SQLException{
+            ArrayList<Shift> result = new ArrayList<>();
+            String sql = "SELECT * FROM tbshift";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                Shift shift = new Shift();
+                shift.setId(rs.getInt("id"));
+                shift.setHours(rs.getString("hour"));
+                result.add(shift);
+            }
+            return result;
+        }
 	
+        /**
+         * Check if at the shift @shift whether doctor @doctor is booked 
+         * @param shift
+         * @param doctor
+         */
+        public boolean isBooked(Doctor doctor, Shift shift){
+            try {
+                String sql = "SELECT * FROM tbbooking WHERE iddoctor = ? AND idshift = ? ";
+                PreparedStatement ps = con.prepareStatement(sql);
+                ps.setInt(1, doctor.getId());
+                ps.setInt(2, shift.getId());
+                ResultSet rs = ps.executeQuery();
+                if(rs.getRow()>0) return true;
+            } catch (SQLException ex) {
+                Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return false;
+        }
+        
 	/**
 	 * Insert a new booking into the database, including its booked rooms. All are added in a single transaction.
 	 * @param b
 	 * @return
 	 */
-	public boolean addBooking(Booking b) {
-		String sqlAddBooking = "INSERT INTO tbbooking(iddoctor, idclient, date, idshift) VALUES(?,?,?,?)";
-		String sqlCheckbookedRoom = "SELECT * FROM tbbooking WHERE iddoctor = ? AND idshift == ?";
-		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		boolean result = true;
-		try {
-			con.setAutoCommit(false);
-			PreparedStatement ps = con.prepareStatement(sqlAddBooking, Statement.RETURN_GENERATED_KEYS);
-			ps.setInt(1, b.getDoctor().getId());
-			ps.setInt(2, b.getClient().getId());
-			ps.setString(3, sdf.format(b.getBookedDate()));
-			ps.setFloat(4, b.getShift());
-			
-			ps.executeUpdate();			
-			//get id of the new inserted booking
-			ResultSet generatedKeys = ps.getGeneratedKeys();
-			if (generatedKeys.next()) {
-				b.setId(generatedKeys.getInt(1));
-				
-				//insert booked rooms
-				for(BookedRoom br: b.getBookedRoom()) {
-					//check if the room is available at the period
-					ps = con.prepareStatement(sqlCheckbookedRoom);
-					ps.setInt(1, br.getRoom().getId());
-					ps.setString(2, sdf.format(br.getCheckin()));
-					ps.setString(3, sdf.format(br.getCheckout()));
-					
-					ResultSet rs = ps.executeQuery();
-					if(rs.next()) {//unavailable
-						result = false;
-						try {
-							con.rollback();
-							con.setAutoCommit(true);
-						}catch(Exception ex) {
-							result = false;
-							ex.printStackTrace();
-						}
-						return result;
-					}
-					
-					//insert booked room
-					ps = con.prepareStatement(sqlAddBookedRoom, Statement.RETURN_GENERATED_KEYS);
-					ps.setInt(1, b.getId());
-					ps.setInt(2, br.getRoom().getId());
-					ps.setString(3, sdf.format(br.getCheckin()));
-					ps.setString(4, sdf.format(br.getCheckout()));
-					ps.setFloat(5, br.getPrice());
-					ps.setFloat(6, br.getSaleoff());
-					ps.setBoolean(7, br.isChecked());
-					
-					ps.executeUpdate();			
-					//get id of the new inserted booking
-					generatedKeys = ps.getGeneratedKeys();
-					if (generatedKeys.next()) {
-						br.setId(generatedKeys.getInt(1));
-					}
-				}
-			}
-			
-			//con.commit();//set this line into comment in JUnit test mode
-		}catch(Exception e) {
-			result = false;			
-			try {				
-				con.rollback();
-			}catch(Exception ex) {
-				result = false;
-				ex.printStackTrace();
-			}
-			e.printStackTrace();
-		}finally {
-			try {				
-				//con.setAutoCommit(true);//set this line into comment in JUnit test mode
-			}catch(Exception ex) {
-				result = false;
-				ex.printStackTrace();
-			}
-		}
-		return result;
+	public Booking addBooking(Booking b) {
+            try {
+                String sqlAddBooking = "INSERT INTO tbbooking(iddoctor, idclient, date, idshift) VALUES(?,?,?,?)";
+                PreparedStatement ps = con.prepareStatement(sqlAddBooking,Statement.RETURN_GENERATED_KEYS);
+                ps.setInt(1, b.getDoctor().getId());
+                ps.setInt(2, b.getClient().getId());
+                ps.setString(3, b.getBookedDate());
+                ps.setInt(4, b.getShift().getId());
+                
+                ps.executeUpdate();
+                //get id of the new inserted booking
+		ResultSet generatedKeys = ps.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    b.setId(generatedKeys.getInt(1));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return b;
 	}
 	
-	/**
-	 * get list of booking involved the room whose @idroom is given between @startDate and @endDate
-	 * @param idroom
-	 * @param startDate
-	 * @param endDate
-	 * @return
-	 */
-	public ArrayList<Booking> getBookingOfRoom(int idroom, Date startDate, Date endDate){
-		ArrayList<Booking> result = new ArrayList<Booking>();
-		String sql = "SELECT a.id as idbookedroom, GREATEST(a.checkin,?) as checkin, LEAST(a.checkout,?) as checkout, a.price, a.saleoff as roomsaleoff,"
-				+ "b.id as idbooking, b.saleoff as bookingsaleoff,"
-				+ " c.id as idclient, c.name, c.address, c.idcard, c.tel"
-				+ " FROM tblBookedRoom a, tblBooking b, tblClient c WHERE a.idroom = ? AND a.ischeckin = 1 "
-				+ "AND a.checkout > ? AND a.checkin < ? AND b.id = a.idbooking AND c.id = b.idclient";
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		try{
-			PreparedStatement ps = con.prepareStatement(sql);
-			ps.setString(1, sdf.format(startDate));
-			ps.setString(2, sdf.format(endDate));
-			ps.setInt(3, idroom);
-			ps.setString(4, sdf.format(startDate));
-			ps.setString(5, sdf.format(endDate));
-			ResultSet rs = ps.executeQuery();
-
-			//a == null ? b : (b == null ? a : (a.before(b) ? a : b));
-			while(rs.next()){
-				Booking b = new Booking();
-				b.setId(rs.getInt("idbooking"));
-				b.setSaleoff(rs.getFloat("bookingsaleoff"));
-				//client
-				Client c = new Client();
-				c.setId(rs.getInt("idclient"));
-				c.setName(rs.getString("name"));
-				c.setAddress(rs.getString("address"));
-				c.setIdCard(rs.getString("idcard"));
-				b.setClient(c);
-				//booked room
-				BookedRoom br = new BookedRoom();
-				br.setId(rs.getInt("idbookedroom"));				
-				br.setSaleoff(rs.getFloat("roomsaleoff"));
-				br.setPrice(rs.getFloat("price"));
-				br.setCheckin(rs.getDate("checkin"));
-				br.setCheckout(rs.getDate("checkout"));		
-				b.getBookedRoom().add(br);
-				result.add(b);
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}	
-		return result;
+	/** Delete booking @Booking
+         * @param Booking
+         * @return
+         */
+        public boolean deleteBooking(Booking b) {
+            try {
+                String sqlAddBooking = "DELETE FROM tbbooking WHERE id = ?";
+                //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                //boolean result = true;
+                PreparedStatement ps = con.prepareStatement(sqlAddBooking);
+                ps.setInt(1, b.getId());
+                ps.executeUpdate();
+                
+            } catch (SQLException ex) {
+                Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+            return true;
 	}
+        
+        /** 
+         * Get all the bank
+         * @return
+         */
+        public ArrayList<Bank> getBank() throws SQLException{
+            ArrayList<Bank> result = new ArrayList<>();
+            String sql = "SELECT * FROM tbbank";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                Bank bank = new Bank();
+                bank.setId(rs.getInt("id"));
+                bank.setName(rs.getString("name"));
+                result.add(bank);
+            }
+            return result;
+        }
+        
+        /**
+         * Pay the bill
+         * @param bill
+         * @return
+         */
+        public boolean addBill(Bill bill){
+            try {
+                String sqlAddBill = "INSERT INTO tbbill(idbooking, payment, stk, tenchuthe, date) VALUES(?,?,?,?,?)";
+                PreparedStatement ps = con.prepareStatement(sqlAddBill);
+                ps.setInt(1, bill.getBooking().getId());
+                ps.setString(2, bill.getPaymentType());
+                ps.setString(3, bill.getStk());
+                ps.setString(4, bill.getTenchuthe());
+                ps.setString(5, bill.getDate());
+                ps.executeUpdate();
+                
+                String sqlPaid = "UPDATE tbbooking SET ispaid = 1 WHERE id = ?";
+                PreparedStatement ps2 = con.prepareStatement(sqlPaid);
+                ps2.setInt(1, bill.getBooking().getId());
+                ps2.executeUpdate();
+                
+            } catch (SQLException ex) {
+                Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+            return true;
+        }
 }

@@ -41,13 +41,15 @@ public class BookingDAO extends DAO{
 	
         public ArrayList<Booking> getAllBookings() throws SQLException{
             ArrayList<Booking> result = new ArrayList<>();
+            ClientDAO clientDAO = new ClientDAO();
+            ShiftDAO shiftDAO = new ShiftDAO();
             String sql = "SELECT * FROM tbbooking";
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
                 Booking booking = new Booking();
-                Client client = new ClientDAO().getClientById(rs.getInt("idclient"));
-                Shift shift = new ShiftDAO().getShiftById(rs.getInt("idshift"));
+                Client client = clientDAO.getClientById(rs.getInt("idclient"));
+                Shift shift = shiftDAO.getShiftById(rs.getInt("idshift"));
 //                shift.setId(rs.getInt("id"));
 //                shift.setHours(rs.getString("hour"));
                 booking.setClient(client);

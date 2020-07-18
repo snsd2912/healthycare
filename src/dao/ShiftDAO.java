@@ -18,7 +18,7 @@ import model.Shift;
 public class ShiftDAO extends DAO {
 
     public Shift getShiftById(int id) {
-        Shift shift = null;
+        Shift shift = new Shift();
         String sql = "SELECT * FROM tbshift WHERE id=?";
         try {
             PreparedStatement ps = con.prepareStatement(sql);

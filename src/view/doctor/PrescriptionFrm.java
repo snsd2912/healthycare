@@ -5,47 +5,24 @@
  */
 package view.doctor;
 
-import dao.DoctorDAO;
-import dao.RecordDAO;
-import dao.prescriptionDAO;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
-import model.Medicine;
-import model.Record;
-import model.Staff;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author thinh
  */
-public class MedicalRecordFrm extends javax.swing.JFrame {
+public class PrescriptionFrm extends javax.swing.JFrame {
 
     /**
-     * Creates new form DoctorScheduleFrm
+     * Creates new form PrescriptionFrm
      */
-    Record record = new Record();
-    RecordDAO recordDAO = new RecordDAO();
-    prescriptionDAO presDAO = new prescriptionDAO();
-    DoctorDAO doctorDAO = new DoctorDAO();
-    Medicine medicine;
-    String recordString= "";
-    int idPres;
-    
-    public MedicalRecordFrm() throws SQLException {
+    String txtPres;
+    public PrescriptionFrm() {
         initComponents();
         setLocationRelativeTo(null);
-        medicine = new Medicine();
-        record = recordDAO.getRecord();
-//        idPres = record.getPrescription().getId();
-        recordString = "Tên thuốc: " + presDAO.getMedicineById(record.getPrescription().getIdMedicine()).getName() +
-                "\n Bác sĩ: " + doctorDAO.getDoctorById(String.valueOf(record.getDoctor().getId())).getName() +
-                "\n Department: " + doctorDAO.getDoctorById(String.valueOf(record.getDoctor().getId())).getDepartment() +
-                "\n Level: " + doctorDAO.getDoctorById(String.valueOf(record.getDoctor().getId())).getLevel() ;
-        lRecord.setText(recordString);
     }
 
     /**
@@ -58,19 +35,25 @@ public class MedicalRecordFrm extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        btnWritePres = new javax.swing.JButton();
+        txtPrescription = new javax.swing.JTextField();
+        btnSave = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        lRecord = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Hồ sơ bệnh án");
+        jLabel1.setText("Kê khai đơn thuốc");
 
-        btnWritePres.setText("Viết đơn thuốc");
-        btnWritePres.addActionListener(new java.awt.event.ActionListener() {
+        txtPrescription.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnWritePresActionPerformed(evt);
+                txtPrescriptionActionPerformed(evt);
+            }
+        });
+
+        btnSave.setText("Save");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
             }
         });
 
@@ -86,47 +69,61 @@ public class MedicalRecordFrm extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(132, 132, 132)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(63, 63, 63)
-                .addComponent(btnWritePres)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(65, 65, 65)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addComponent(txtPrescription, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(44, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(67, 67, 67)
+                .addComponent(btnSave)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton2)
-                .addGap(59, 59, 59))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(42, Short.MAX_VALUE)
-                .addComponent(lRecord, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(47, 47, 47))
+                .addGap(71, 71, 71))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(lRecord, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtPrescription, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnWritePres)
+                    .addComponent(btnSave)
                     .addComponent(jButton2))
-                .addGap(35, 35, 35))
+                .addGap(28, 28, 28))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnWritePresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWritePresActionPerformed
+    private void txtPrescriptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrescriptionActionPerformed
         // TODO add your handling code here:
-        new PrescriptionFrm().setVisible(rootPaneCheckingEnabled);
-    }//GEN-LAST:event_btnWritePresActionPerformed
+    }//GEN-LAST:event_txtPrescriptionActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         this.dispose();
-        new DoctorHomeFrm(new Staff()).setVisible(rootPaneCheckingEnabled);
+        try {
+            new MedicalRecordFrm().setVisible(rootPaneCheckingEnabled);
+        } catch (SQLException ex) {
+            Logger.getLogger(PrescriptionFrm.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        // TODO add your handling code here:
+        txtPres = txtPrescription.getText();
+        if (!txtPres.isBlank()) {
+            JOptionPane.showMessageDialog(rootPane, "Success!");
+        } else{
+            JOptionPane.showMessageDialog(rootPane, "Please fill the form!");
+        }
+    }//GEN-LAST:event_btnSaveActionPerformed
 
     /**
      * @param args the command line arguments
@@ -145,36 +142,28 @@ public class MedicalRecordFrm extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MedicalRecordFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PrescriptionFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MedicalRecordFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PrescriptionFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MedicalRecordFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PrescriptionFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MedicalRecordFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PrescriptionFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    new MedicalRecordFrm().setVisible(true);
-//                            txtRecord.append(recordString);
-                } catch (SQLException ex) {
-                    Logger.getLogger(MedicalRecordFrm.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
+                new PrescriptionFrm().setVisible(true);
             }
         });
-        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnWritePres;
+    private javax.swing.JButton btnSave;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel lRecord;
+    private javax.swing.JTextField txtPrescription;
     // End of variables declaration//GEN-END:variables
 }

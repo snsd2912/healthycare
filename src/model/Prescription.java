@@ -15,16 +15,31 @@ import java.util.ArrayList;
  */
 public class Prescription implements Serializable{
     private int id;
+    private int idMedicine;
     private ArrayList<Medicine> medicine;
 
     public Prescription() {
     }
 
-    public Prescription(int id, ArrayList<Medicine> medicine) {
+    public Prescription(int id, int idMedicine) {
         this.id = id;
-        this.medicine = medicine;
+        this.idMedicine = idMedicine;
     }
 
+    
+    public int getIdMedicine() {
+        return idMedicine;
+    }
+
+    public void setIdMedicine(int idMedicine) {
+        this.idMedicine = idMedicine;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    
     public int getId() {
         return id;
     }

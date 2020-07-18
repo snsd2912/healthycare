@@ -64,7 +64,7 @@ public class ClientDAO extends DAO{
 	 * @return
 	 */
 	public Client getClientById(int key){
-		Client client = null;
+		Client client = new Client();
 		String sql = "SELECT * FROM tbclient WHERE id=?";
 		try{
 			PreparedStatement ps = con.prepareStatement(sql);

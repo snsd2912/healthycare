@@ -32,18 +32,26 @@ public class DoctorHomeFrm extends javax.swing.JFrame {
     public DoctorHomeFrm(Staff staff) {
         this.staff = staff;
         initComponents();
+        setLocationRelativeTo(null);
         try {
             bookingList = new dao.BookingDAO().getAllBookings();
         } catch (SQLException ex) {
             Logger.getLogger(DoctorHomeFrm.class.getName()).log(Level.SEVERE, null, ex);
         }
         tblModel = (DefaultTableModel) tblDoctorSchedule.getModel();
-//        tblDoctorSchedule.setVisible(false);
+        tblDoctorSchedule.setVisible(false);
         tblDoctorSchedule.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
 //                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                System.out.println(tblDoctorSchedule.getValueAt(tblDoctorSchedule.getSelectedRow(), 0).toString());
+//                System.out.println(tblDoctorSchedule.getValueAt(tblDoctorSchedule.getSelectedRow(), 0).toString());
+                MedicalRecordFrm medicalRecordFrm = null;
+                try {
+                    medicalRecordFrm = new MedicalRecordFrm();
+                } catch (SQLException ex) {
+                    Logger.getLogger(DoctorHomeFrm.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                medicalRecordFrm.setVisible(rootPaneCheckingEnabled);
             }
         });
     }
@@ -52,8 +60,8 @@ public class DoctorHomeFrm extends javax.swing.JFrame {
         tblModel.setRowCount(0);
         
         for(Booking booking : bookingList){
-            tblModel.addRow(new Object[]{booking.getClient().getName(), booking.getClient().getDob(),
-            booking.getBookedDate(), booking.getShift().getHours()});
+              tblModel.addRow(new Object[]{booking.getClient().getName(), booking.getClient().getDob(),
+                  booking.getBookedDate(), booking.getShift().getHours()});
         }
     }
     /**
@@ -71,6 +79,7 @@ public class DoctorHomeFrm extends javax.swing.JFrame {
         btnXemLichKham = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblDoctorSchedule = new javax.swing.JTable();
+        btnLogout = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -107,22 +116,31 @@ public class DoctorHomeFrm extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(tblDoctorSchedule);
 
+        btnLogout.setText("Logout");
+        btnLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLogoutActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(btnXemLichKham)
-                .addGap(175, 175, 175))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(162, 162, 162))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(28, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(44, 44, 44)
+                .addComponent(btnXemLichKham)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnLogout)
+                .addGap(49, 49, 49))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -130,9 +148,11 @@ public class DoctorHomeFrm extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(28, 28, 28)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-                .addComponent(btnXemLichKham)
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnXemLichKham)
+                    .addComponent(btnLogout))
+                .addGap(0, 13, Short.MAX_VALUE))
         );
 
         pack();
@@ -140,9 +160,15 @@ public class DoctorHomeFrm extends javax.swing.JFrame {
 
     private void btnXemLichKhamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXemLichKhamActionPerformed
         // TODO add your handling code here:
-//        tblDoctorSchedule.setVisible(true);
+        tblDoctorSchedule.setVisible(true);
         displaySchedule();
     }//GEN-LAST:event_btnXemLichKhamActionPerformed
+
+    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+        new view.user.LoginFrm().setVisible(rootPaneCheckingEnabled);
+    }//GEN-LAST:event_btnLogoutActionPerformed
     
     /**
      * @param args the command line arguments
@@ -181,6 +207,7 @@ public class DoctorHomeFrm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnXemLichKham;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;

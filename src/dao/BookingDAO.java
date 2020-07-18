@@ -39,6 +39,26 @@ public class BookingDAO extends DAO{
             return result;
         }
 	
+        public ArrayList<Booking> getAllBookings() throws SQLException{
+            ArrayList<Booking> result = new ArrayList<>();
+            String sql = "SELECT * FROM tbbooking";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                Booking booking = new Booking();
+                Client client = new ClientDAO().getClientById(rs.getInt("idclient"));
+                Shift shift = new ShiftDAO().getShiftById(rs.getInt("idshift"));
+//                shift.setId(rs.getInt("id"));
+//                shift.setHours(rs.getString("hour"));
+                booking.setClient(client);
+                booking.setBookedDate(rs.getDate("date").toString());
+                booking.setShift(shift);
+                
+                result.add(booking);
+            }
+            return result;
+        }
+        
         /**
          * Check if at the shift @shift whether doctor @doctor is booked 
          * @param shift

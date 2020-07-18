@@ -5,6 +5,16 @@
  */
 package view.doctor;
 
+import dao.BookingDAO;
+import java.awt.List;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import model.Booking;
 import model.Staff;
 
 /**
@@ -13,14 +23,39 @@ import model.Staff;
  */
 public class DoctorHomeFrm extends javax.swing.JFrame {
     private Staff staff;
+    private ArrayList<Booking> bookingList;
+    private DefaultTableModel tblModel;
+    
     /**
      * Creates new form DoctorHomeFrm
      */
     public DoctorHomeFrm(Staff staff) {
         this.staff = staff;
         initComponents();
+        try {
+            bookingList = new dao.BookingDAO().getAllBookings();
+        } catch (SQLException ex) {
+            Logger.getLogger(DoctorHomeFrm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        tblModel = (DefaultTableModel) tblDoctorSchedule.getModel();
+//        tblDoctorSchedule.setVisible(false);
+        tblDoctorSchedule.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+//                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                System.out.println(tblDoctorSchedule.getValueAt(tblDoctorSchedule.getSelectedRow(), 0).toString());
+            }
+        });
     }
 
+    public void displaySchedule(){
+        tblModel.setRowCount(0);
+        
+        for(Booking booking : bookingList){
+            tblModel.addRow(new Object[]{booking.getClient().getName(), booking.getClient().getDob(),
+            booking.getBookedDate(), booking.getShift().getHours()});
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -30,22 +65,85 @@ public class DoctorHomeFrm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        btnXemLichKham = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblDoctorSchedule = new javax.swing.JTable();
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Doctor Home");
+
+        btnXemLichKham.setText("Xem danh sách lịch khám");
+        btnXemLichKham.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXemLichKhamActionPerformed(evt);
+            }
+        });
+
+        tblDoctorSchedule.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Name", "D.O.B", "Date", "Shift"
+            }
+        ));
+        jScrollPane2.setViewportView(tblDoctorSchedule);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(28, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnXemLichKham)
+                .addGap(175, 175, 175))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(162, 162, 162))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jLabel1)
+                .addGap(28, 28, 28)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addComponent(btnXemLichKham)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnXemLichKhamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXemLichKhamActionPerformed
+        // TODO add your handling code here:
+//        tblDoctorSchedule.setVisible(true);
+        displaySchedule();
+    }//GEN-LAST:event_btnXemLichKhamActionPerformed
+    
     /**
      * @param args the command line arguments
      */
@@ -83,5 +181,11 @@ public class DoctorHomeFrm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnXemLichKham;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tblDoctorSchedule;
     // End of variables declaration//GEN-END:variables
 }

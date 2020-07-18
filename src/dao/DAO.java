@@ -7,12 +7,12 @@ public class DAO {
 	
 	public DAO(){
 		if(con == null){
-			String dbUrl = "jdbc:mysql://localhost:3306/hospital?autoReconnect=true&useSSL=false";
+			String dbUrl = "jdbc:mysql://localhost:3306/healthycare?autoReconnect=true&useSSL=false";
 			String dbClass = "com.mysql.jdbc.Driver";
 
 			try {
 				//Class.forName(dbClass);
-				con = DriverManager.getConnection (dbUrl, "root", "SAng19$$$");
+				con = DriverManager.getConnection (dbUrl, "root", "123456a@");
 			}catch(Exception e) {
 				e.printStackTrace();
 			}

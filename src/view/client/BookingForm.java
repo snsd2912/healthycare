@@ -277,11 +277,14 @@ public class BookingForm extends javax.swing.JFrame {
             booking.setDoctor(this.doctor);
             booking.setBookedDate(date);
             booking.setShift(s);
-            if((new BookingDAO()).isBooked(doctor, s)){
+            
+            boolean isBooked = (new BookingDAO()).isBooked(this.doctor, s);
+            //System.out.println(isBooked);
+            if(isBooked){
                 JOptionPane.showMessageDialog(this, "Ca bạn chọn không có sẵn!");
             }else{  
                 booking = (new BookingDAO()).addBooking(booking);
-                System.out.println(booking.getClient().getId());
+                //System.out.println(booking.getClient().getId());
                 (new BillForm(booking)).setVisible(true);
                 this.dispose();
             }

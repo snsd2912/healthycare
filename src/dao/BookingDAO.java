@@ -45,17 +45,20 @@ public class BookingDAO extends DAO{
          * @param doctor
          */
         public boolean isBooked(Doctor doctor, Shift shift){
+            int x=0;
             try {
                 String sql = "SELECT * FROM tbbooking WHERE iddoctor = ? AND idshift = ? ";
                 PreparedStatement ps = con.prepareStatement(sql);
+                //System.out.println(doctor.getId()+" "+shift.getId());
                 ps.setInt(1, doctor.getId());
                 ps.setInt(2, shift.getId());
                 ResultSet rs = ps.executeQuery();
-                if(rs.getRow()>0) return true;
+                if(rs.next()) x = 1;
             } catch (SQLException ex) {
                 Logger.getLogger(BookingDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return false;
+            //System.out.println("x = "+x);
+            return x > 0 ? true:false;
         }
         
 	/**

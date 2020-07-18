@@ -6,6 +6,9 @@
 package view.client;
 
 import dao.ClientDAO;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Client;
 import view.user.LoginFrm;
 
@@ -82,6 +85,11 @@ public class ClientHomeFrm extends javax.swing.JFrame {
 
         jButton4.setForeground(new java.awt.Color(0, 102, 102));
         jButton4.setText("Thông tin khoa");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -154,6 +162,17 @@ public class ClientHomeFrm extends javax.swing.JFrame {
         (new SearchForm(this.client)).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        try {
+            // TODO add your handling code here:
+            (new DepartmentSearchForm(this.client)).setVisible(true);
+            this.dispose();
+        } catch (SQLException ex) {
+            Logger.getLogger(ClientHomeFrm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments

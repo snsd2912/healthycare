@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 
 import dao.UserDAO;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import model.Staff;
@@ -42,35 +43,47 @@ public class LoginFrm extends JFrame implements ActionListener{
 		btnLogin = new JButton("Login");
 		
 		JPanel pnMain = new JPanel();
-                //pnMain.setBackground(Color.PINK);
+                pnMain.setBackground(new Color(0,204,204));
 		pnMain.setSize(this.getSize().width-5, this.getSize().height-20);		
 		pnMain.setLayout(new BoxLayout(pnMain,BoxLayout.PAGE_AXIS));
 		pnMain.add(Box.createRigidArea(new Dimension(0,10)));
 		
 		JLabel lblHome = new JLabel("Login");
+                lblHome.setForeground(new Color(0,102,102));
+                Font font = new Font("Tahoma", Font.BOLD,36);
+                lblHome.setFont(font);
 		lblHome.setAlignmentX(Component.CENTER_ALIGNMENT);	
-		lblHome.setFont (lblHome.getFont ().deriveFont (20.0f));
+		lblHome.setFont (lblHome.getFont ().deriveFont (36.0f));
 		pnMain.add(lblHome);
-		pnMain.add(Box.createRigidArea(new Dimension(0,20)));
+		pnMain.add(Box.createRigidArea(new Dimension(0,30)));
 		
 		JPanel pnUsername = new JPanel();
+                pnUsername.setBackground(new Color(0,204,204));
 		pnUsername.setLayout(new FlowLayout());
 		pnUsername.add(new JLabel("Username:"));
 		pnUsername.add(txtUsername);
 		pnMain.add(pnUsername);
 		
 		JPanel pnPass = new JPanel();
+                pnPass.setBackground(new Color(0,204,204));
 		pnPass.setLayout(new FlowLayout());
 		pnPass.add(new JLabel("Password:"));
 		pnPass.add(txtPassword);
 		pnMain.add(pnPass);
 		
-		pnMain.add(btnLogin);
                 btnLogin.addActionListener(this);
+                JPanel pnLogin = new JPanel();
+                pnLogin.setBackground(new Color(0,204,204));
+                pnLogin.setLayout(new FlowLayout());
+		pnLogin.add(btnLogin);
+                pnMain.add(pnLogin);
+                
 		
-                pnMain.add(Box.createRigidArea(new Dimension(0,10)));
+                //pnMain.add(Box.createRigidArea(new Dimension(0,10)));
 			
-		
+		JPanel pnSignUp = new JPanel();
+                pnSignUp.setLayout(new FlowLayout());
+		pnSignUp.setBackground(new Color(0,204,204));
                 lbSignUp = new JLabel("Sign Up");
                 lbSignUp.addMouseListener(new MouseAdapter() {
                     @Override
@@ -79,8 +92,8 @@ public class LoginFrm extends JFrame implements ActionListener{
                         setVisible(false);
                     }
                 });
-                
-                pnMain.add(lbSignUp);
+                pnSignUp.add(lbSignUp);
+                pnMain.add(pnSignUp);
                 pnMain.add(Box.createRigidArea(new Dimension(0,10)));
                 //pnMain.add(Box.createRigidArea(new Dimension(0,20)));
                 

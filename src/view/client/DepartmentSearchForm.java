@@ -5,7 +5,7 @@
  */
 package view.client;
 
-import dao.DoctorDAO;
+import dao.StaffDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -13,29 +13,35 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Client;
+import model.Department;
 import model.Doctor;
 
 /**
  *
  * @author DELL
  */
-public class SearchForm extends javax.swing.JFrame {
+public class DepartmentSearchForm extends javax.swing.JFrame {
     private Client client;
-    ArrayList<Doctor> result = new ArrayList<Doctor>();
+    private ArrayList<Department> dep;
+    private ArrayList<Doctor> result;
     DefaultTableModel dtm = new DefaultTableModel();
-    Object[] obj = {"Bác sĩ", "Khoa", "Bằng cấp"};
+    Object[] obj = {"Bác sĩ", "Bằng cấp"};
     /**
-     * Creates new form SearchForm
+     * Creates new form DepartmentSearchForm
      */
-    public SearchForm() {
+    public DepartmentSearchForm() {
     }
     
-    public SearchForm(Client client) {
+    public DepartmentSearchForm(Client client) throws SQLException {
         initComponents();
         this.client = client;
-        txtName.setText(this.client.getName());
+        dep = (new StaffDAO()).getDepartments();
+        for(Department d : dep){
+            combo.addItem(d.getName());
+        }
         dtm.setColumnIdentifiers(obj);
         tbl.setModel(dtm);
+        result = new ArrayList<>();
     }
 
     /**
@@ -50,13 +56,13 @@ public class SearchForm extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        txtKey = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
         btnBooking = new javax.swing.JButton();
         txtName = new javax.swing.JLabel();
+        combo = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -67,13 +73,6 @@ public class SearchForm extends javax.swing.JFrame {
         jLabel1.setText("HEALTHY CARE");
 
         jLabel2.setText("Khách hàng:");
-
-        txtKey.setToolTipText("Nhập tên bác sĩ");
-        txtKey.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtKeyActionPerformed(evt);
-            }
-        });
 
         jButton1.setText("Tìm kiếm");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -87,11 +86,11 @@ public class SearchForm extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Bác sĩ", "Khoa", "Bằng cấp"
+                "Bác sĩ", "Bằng cấp"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, true, true
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -102,7 +101,6 @@ public class SearchForm extends javax.swing.JFrame {
         if (tbl.getColumnModel().getColumnCount() > 0) {
             tbl.getColumnModel().getColumn(0).setResizable(false);
             tbl.getColumnModel().getColumn(1).setResizable(false);
-            tbl.getColumnModel().getColumn(2).setResizable(false);
         }
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
@@ -131,8 +129,8 @@ public class SearchForm extends javax.swing.JFrame {
                         .addGap(42, 42, 42)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(txtKey, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
+                                .addComponent(combo, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(47, 47, 47)
                                 .addComponent(jButton1))
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
@@ -147,7 +145,7 @@ public class SearchForm extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(205, 205, 205)
                         .addComponent(btnBooking)))
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -162,9 +160,9 @@ public class SearchForm extends javax.swing.JFrame {
                     .addComponent(txtName))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtKey, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addGap(35, 35, 35)
+                    .addComponent(jButton1)
+                    .addComponent(combo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(37, 37, 37)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addComponent(btnBooking)
@@ -188,18 +186,24 @@ public class SearchForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:  
-        result.clear();
-        dtm.setRowCount(0);
-        result = (new DoctorDAO()).getDoctorsById(txtKey.getText());
-        result.forEach((doctor) -> {
-            dtm.addRow(new Object[]{doctor.getName(),doctor.getDepartment().getName(),doctor.getLevel().getName()});
-        });
+        try {
+            // TODO add your handling code here:
+            result.clear();
+            dtm.setRowCount(0);
+            result = (new StaffDAO()).getDoctors(dep.get(combo.getSelectedIndex()));
+            result.forEach((doctor) -> {
+                dtm.addRow(new Object[]{doctor.getName(),doctor.getLevel().getName()});
+            });
+        } catch (SQLException ex) {
+            Logger.getLogger(DepartmentSearchForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void txtKeyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtKeyActionPerformed
+    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtKeyActionPerformed
+        (new ClientHomeFrm(this.client)).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jLabel3MouseClicked
 
     private void btnBookingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBookingActionPerformed
         // TODO add your handling code here:
@@ -213,12 +217,6 @@ public class SearchForm extends javax.swing.JFrame {
             }
         }else JOptionPane.showMessageDialog(this, "Bạn chưa chọn bác sĩ!");
     }//GEN-LAST:event_btnBookingActionPerformed
-
-    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-        // TODO add your handling code here:
-        (new ClientHomeFrm(this.client)).setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_jLabel3MouseClicked
 
     /**
      * @param args the command line arguments
@@ -237,26 +235,27 @@ public class SearchForm extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SearchForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DepartmentSearchForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SearchForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DepartmentSearchForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SearchForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DepartmentSearchForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SearchForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DepartmentSearchForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SearchForm().setVisible(true);
+                new DepartmentSearchForm().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBooking;
+    private javax.swing.JComboBox<String> combo;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -264,7 +263,6 @@ public class SearchForm extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tbl;
-    private javax.swing.JTextField txtKey;
     private javax.swing.JLabel txtName;
     // End of variables declaration//GEN-END:variables
 }

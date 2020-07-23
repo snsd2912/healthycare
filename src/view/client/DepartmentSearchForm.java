@@ -34,6 +34,7 @@ public class DepartmentSearchForm extends javax.swing.JFrame {
     
     public DepartmentSearchForm(Client client) throws SQLException {
         initComponents();
+        setLocationRelativeTo(null);
         this.client = client;
         dep = (new StaffDAO()).getDepartments();
         for(Department d : dep){

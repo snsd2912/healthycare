@@ -70,7 +70,7 @@ public class DoctorDAO extends DAO {
         return result;
     }
 
-    public Doctor getDoctorById(String key) {
+    public Doctor getDoctorByName(String key) {
         Doctor doctor = new Doctor();
         String sql = "select * from tbstaff, tbdoctor, tblevel, tbdepartment\n"
                 + "where tbstaff.name like ? and tbstaff.id = tbdoctor.id and "
@@ -101,6 +101,46 @@ public class DoctorDAO extends DAO {
 
                 doctor.setLevel(level);
                 doctor.setDepartment(department);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return doctor;
+    }
+    
+    public Doctor getDoctorById(int id) {
+        Doctor doctor = new Doctor();
+//        String sql = "select * from tbstaff, tbdoctor, tblevel, tbdepartment\n"
+//                + "where id=? and tbstaff.id = tbdoctor.id and "
+//                + "tbdoctor.iddepartment = tbdepartment.id and tbdoctor.idlevel = tblevel.id";
+        String sql = "SELECT * FROM tbdoctor WHERE id=?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                Level level = new Level();
+                Department department = new Department();
+
+                doctor.setId(rs.getInt("id"));
+//                doctor.setName(rs.getString("name"));
+//                doctor.setDob(rs.getString("dob"));
+//                doctor.setGender(rs.getString("gender"));
+//                doctor.setPhonenumber(rs.getString("phonenumber"));
+//
+//                level.setId(rs.getInt("idlevel"));
+//                level.setName(rs.getString("levelname"));
+//                level.setPrice(rs.getFloat("levelprice"));
+//
+//                department.setId(rs.getInt("iddepartment"));
+//                department.setName(rs.getString("depname"));
+//                department.setDescription("depdiscription");
+//
+//                doctor.setLevel(level);
+//                doctor.setDepartment(department);
 
             }
         } catch (Exception e) {

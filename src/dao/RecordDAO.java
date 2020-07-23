@@ -21,31 +21,38 @@ import model.Shift;
  *
  * @author thinh
  */
-public class RecordDAO extends DAO{
-    public RecordDAO(){
+public class RecordDAO extends DAO {
+
+    Record result;
+    Doctor doctor;
+    Prescription prescription;
+    DoctorDAO doctorDAO;
+    prescriptionDAO presDAO;
+
+    public RecordDAO() {
         super();
     }
-    
-    public Record getRecord() throws SQLException{
-            Record result = new Record();
-            Doctor doctor;
-            Prescription prescription;
-            DoctorDAO doctorDAO = new DoctorDAO();
-            prescriptionDAO presDAO = new prescriptionDAO();
-            String sql = "SELECT * FROM tbrecord";
-            PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while(rs.next()){
-                 doctor = doctorDAO.getDoctorById(String.valueOf(rs.getInt("iddoctor")));
-                 prescription = presDAO.getPrescriptionById(rs.getInt("idprescription"));
+
+    public Record getRecord() throws SQLException {
+        result = new Record();
+        doctor = new Doctor();
+        doctorDAO = new DoctorDAO();
+        prescription = new Prescription();
+        presDAO = new prescriptionDAO();
+        String sql = "SELECT * FROM tbrecord";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            doctor = doctorDAO.getDoctorById(rs.getInt("iddoctor"));
+            prescription = presDAO.getPrescriptionById(rs.getInt("idprescription"));
 //                shift.setId(rs.getInt("id"));
 //                shift.setHours(rs.getString("hour"));
-                result.setDoctor(doctor);
+            result.setDoctor(doctor);
 //                record.setBookedDate(rs.getDate("date").toString());
-                result.setPrescription(prescription);
-              
+            result.setPrescription(prescription);
+
 //                result.add(record);
-            }
-            return result;
         }
+        return result;
+    }
 }

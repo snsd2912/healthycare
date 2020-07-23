@@ -7,6 +7,7 @@ package view.doctor;
 
 import dao.DoctorDAO;
 import dao.RecordDAO;
+import dao.StaffDAO;
 import dao.prescriptionDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
+import model.Doctor;
 import model.Medicine;
 import model.Record;
 import model.Staff;
@@ -34,6 +36,7 @@ public class MedicalRecordFrm extends javax.swing.JFrame {
     Medicine medicine;
     String recordString= "";
     int idPres;
+    ArrayList<Doctor> doctorList;
     
     public MedicalRecordFrm() throws SQLException {
         initComponents();
@@ -41,10 +44,16 @@ public class MedicalRecordFrm extends javax.swing.JFrame {
         medicine = new Medicine();
         record = recordDAO.getRecord();
 //        idPres = record.getPrescription().getId();
-        recordString = "Tên thuốc: " + presDAO.getMedicineById(record.getPrescription().getIdMedicine()).getName() +
-                "\n Bác sĩ: " + doctorDAO.getDoctorById(String.valueOf(record.getDoctor().getId())).getName() +
-                "\n Department: " + doctorDAO.getDoctorById(String.valueOf(record.getDoctor().getId())).getDepartment() +
-                "\n Level: " + doctorDAO.getDoctorById(String.valueOf(record.getDoctor().getId())).getLevel() ;
+        doctorList = new StaffDAO().getDoctors(record.getDoctor().getId());
+        for(Doctor d: doctorList){
+            recordString += "<HTML>Tên thuốc: " + presDAO.getMedicineById(record.getPrescription().getIdMedicine()).getName() +
+                    "<BR>Bác sĩ: " + d.getName() + "<BR>Khoa: " + d.getDepartment().getName() + "<BR>Level: " +d.getLevel().getName() +"</HTML>";
+        }
+        
+//        recordString = "Tên thuốc: " + presDAO.getMedicineById(record.getPrescription().getIdMedicine()).getName() +
+//                "\n Bác sĩ: " + doctorDAO.getDoctorById(record.getDoctor().getId()).getName() +
+//                "\n Department: " + doctorDAO.getDoctorById(record.getDoctor().getId()).getDepartment().getName() +
+//                "\n Level: " + doctorDAO.getDoctorById(record.getDoctor().getId()).getLevel().getName() ;
         lRecord.setText(recordString);
     }
 
@@ -64,6 +73,7 @@ public class MedicalRecordFrm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Hồ sơ bệnh án");
 
@@ -81,24 +91,27 @@ public class MedicalRecordFrm extends javax.swing.JFrame {
             }
         });
 
+        lRecord.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(132, 132, 132)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(179, 179, 179))
+            .addGroup(layout.createSequentialGroup()
                 .addGap(63, 63, 63)
-                .addComponent(btnWritePres)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton2)
-                .addGap(59, 59, 59))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(42, Short.MAX_VALUE)
-                .addComponent(lRecord, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(47, 47, 47))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lRecord, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnWritePres)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 218, Short.MAX_VALUE)
+                        .addComponent(jButton2)
+                        .addGap(59, 59, 59))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -106,8 +119,8 @@ public class MedicalRecordFrm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(lRecord, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addComponent(lRecord, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnWritePres)
                     .addComponent(jButton2))

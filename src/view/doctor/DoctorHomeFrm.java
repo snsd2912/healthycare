@@ -16,6 +16,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import model.Booking;
 import model.Staff;
+import view.user.LoginFrm;
 
 /**
  *
@@ -96,6 +97,7 @@ public class DoctorHomeFrm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Doctor Home");
 
@@ -152,7 +154,7 @@ public class DoctorHomeFrm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnXemLichKham)
                     .addComponent(btnLogout))
-                .addGap(0, 13, Short.MAX_VALUE))
+                .addGap(0, 4, Short.MAX_VALUE))
         );
 
         pack();
@@ -167,7 +169,7 @@ public class DoctorHomeFrm extends javax.swing.JFrame {
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
         // TODO add your handling code here:
         this.dispose();
-        new view.user.LoginFrm().setVisible(rootPaneCheckingEnabled);
+        new LoginFrm().setVisible(true);
     }//GEN-LAST:event_btnLogoutActionPerformed
     
     /**

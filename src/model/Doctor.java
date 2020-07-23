@@ -17,8 +17,14 @@ public class Doctor extends Staff implements Serializable{
     private Level level;
     private Department department;
 
-    public Doctor() {
+    public Doctor(){
         super();
+    }
+    
+    public Doctor(Staff staff, Level level, Department department) {
+        super();
+        this.level = level;
+        this.department = department;
     }
     
     public Doctor(Level idlevel,Department iddepartment,int id, String username, String password, 
